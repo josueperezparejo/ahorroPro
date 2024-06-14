@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Input } from '@nextui-org/react';
 import Swal from 'sweetalert2';
 import './App.css';
+import { Accordion, AccordionBody, AccordionHeader, AccordionList, BadgeDelta, Card, Divider } from '@tremor/react';
 
 const isValidNumber = (value) => {
   // Permitir solo números y un punto decimal
@@ -36,23 +37,50 @@ const cleanCurrencyInput = (value) => {
 function App() {
   const [capital, setCapital] = useState('');
   const [interes, setInteres] = useState('');
-  const [periodoAnios, setPeriodoAnios] = useState(0);
-  const [periodoMeses, setPeriodoMeses] = useState(0);
-  const [periodoDias, setPeriodoDias] = useState(0);
+  const [periodoAnios, setPeriodoAnios] = useState('');
+  const [periodoMeses, setPeriodoMeses] = useState('');
+  const [periodoDias, setPeriodoDias] = useState('');
   const [resultado, setResultado] = useState('');
 
   const calcularInteresCompuesto = (capital, interesAnual, periodoAnios, periodoMeses, periodoDias) => {
     const capitalNum = parseFloat(cleanCurrencyInput(capital));
     const interesAnualDecimal = parseFloat(interesAnual) / 100;
-    const periodoAniosNum = parseInt(periodoAnios);
-    const periodoMesesNum = parseInt(periodoMeses);
-    const periodoDiasNum = parseInt(periodoDias);
+    let periodoAniosNum = parseInt(periodoAnios);
+    let periodoMesesNum = parseInt(periodoMeses);
+    let periodoDiasNum = parseInt(periodoDias);
 
-    if (isNaN(capitalNum) || isNaN(interesAnualDecimal) || isNaN(periodoAniosNum) || isNaN(periodoMesesNum) || isNaN(periodoDiasNum)) {
+    if (isNaN(capitalNum) || isNaN(interesAnualDecimal)) {
       Swal.fire({
         position: "center",
         icon: "warning",
         title: "Por favor, ingresa valores válidos.",
+        showConfirmButton: false,
+        timer: 1500
+      });
+      return null;
+    }
+
+    // Verificar si al menos una de las variables tiene un valor mayor que cero
+    const hasValue = (!isNaN(periodoAniosNum) && periodoAniosNum > 0) ||
+      (!isNaN(periodoMesesNum) && periodoMesesNum > 0) ||
+      (!isNaN(periodoDiasNum) && periodoDiasNum > 0);
+
+    if (hasValue) {
+      // Asignar cero a las variables NaN
+      if (isNaN(periodoAniosNum)) {
+        periodoAniosNum = 0;
+      }
+      if (isNaN(periodoMesesNum)) {
+        periodoMesesNum = 0;
+      }
+      if (isNaN(periodoDiasNum)) {
+        periodoDiasNum = 0;
+      }
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "Agrega un período valido.",
         showConfirmButton: false,
         timer: 1500
       });
@@ -85,9 +113,18 @@ function App() {
   const handleClickCalcular = () => {
     const interesGanado = calcularInteresCompuesto(capital, interes, periodoAnios, periodoMeses, periodoDias);
     if (interesGanado !== null) {
-      setResultado(`El interés ganado será: ${formatCurrency(interesGanado)} COP`);
+      setResultado(`${formatCurrency(interesGanado)} COP`);
     }
   };
+
+  const handleClean = () => {
+    setCapital('')
+    setInteres('')
+    setPeriodoAnios('')
+    setPeriodoMeses('')
+    setPeriodoDias('')
+    setResultado('')
+  }
 
   return (
     <div className="container mx-auto flex justify-center">
@@ -125,7 +162,7 @@ function App() {
             onKeyDown={handleKeyDown}
             step="0.01"
             labelPlacement='outside'
-            
+
             endContent={
               <div className="pointer-events-none flex items-center">
                 <span className="text-default-400 text-small">%</span>
@@ -172,16 +209,52 @@ function App() {
             />
           </div>
         </div>
-        <Button className='w-full' onClick={handleClickCalcular} color="secondary">
-          Calcular
-        </Button>
+        <div className='flex gap-3'>
+          <Button className='w-full' onClick={handleClickCalcular} color="secondary">
+            Calcular
+          </Button>
+
+          <Button onClick={handleClean} className='w-full' variant="bordered" color="secondary">
+            Limpiar
+          </Button>
+        </div>
+
         <div className='my-3'>
-          <h2 className='font-semibold text-1xl text-secondary-600 mb-2'>Resultado:</h2>
-          <p> {resultado}</p>
+          {resultado &&
+            
+            <Card className="mx-auto max-w-xl" decoration="top" decorationColor="purple">
+            <div className="flex items-center justify-between">
+              <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">El interés ganado será:</h4>
+              <BadgeDelta deltaType="moderateIncrease" isIncreasePositive={true} size="xs" >          +9.3%        </BadgeDelta>
+            </div>
+            <p className="text-tremor-metric text-tremor-content-strong dark:text-dark-tremor-content-strong font-semibold">{resultado}</p>
+          </Card>}
         </div>
         <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]">
           <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_800px_at_100%_200px,#d5c5ff,transparent)]"></div>
         </div>
+        <AccordionList>
+          <Accordion>
+            <AccordionHeader className="text-sm font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+              Accordion 1
+            </AccordionHeader>
+            <AccordionBody className="leading-6">        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus        tempor lorem non est congue blandit. Praesent non lorem sodales,        suscipit est sed, hendrerit dolor.
+            </AccordionBody>
+          </Accordion>
+          <Accordion>
+            <AccordionHeader className="text-sm font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+              Accordion 2
+            </AccordionHeader>
+            <AccordionBody className="leading-6">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus        tempor lorem non est congue blandit. Praesent non lorem sodales,        suscipit est sed, hendrerit dolor.      </AccordionBody>    </Accordion>
+          <Accordion>
+            <AccordionHeader className="text-sm font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
+              Accordion 3
+            </AccordionHeader>
+            <AccordionBody className="leading-6">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus        tempor lorem non est congue blandit. Praesent non lorem sodales,        suscipit est sed, hendrerit dolor.      </AccordionBody>
+          </Accordion>
+        </AccordionList>
       </div>
     </div>
   );
