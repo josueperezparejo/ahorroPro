@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input, Link } from '@nextui-org/react';
 import Swal from 'sweetalert2';
 import './App.css';
 import { Accordion, AccordionBody, AccordionHeader, AccordionList, BadgeDelta, Card, Divider } from '@tremor/react';
+import { Nubank } from './components';
 
 const isValidNumber = (value) => {
   // Permitir solo números y un punto decimal
@@ -41,6 +42,7 @@ function App() {
   const [periodoMeses, setPeriodoMeses] = useState('');
   const [periodoDias, setPeriodoDias] = useState('');
   const [resultado, setResultado] = useState('');
+  const [interesGenerado, setInteresGenerado] = useState('');
 
   const calcularInteresCompuesto = (capital, interesAnual, periodoAnios, periodoMeses, periodoDias) => {
     const capitalNum = parseFloat(cleanCurrencyInput(capital));
@@ -113,7 +115,15 @@ function App() {
   const handleClickCalcular = () => {
     const interesGanado = calcularInteresCompuesto(capital, interes, periodoAnios, periodoMeses, periodoDias);
     if (interesGanado !== null) {
-      setResultado(`${formatCurrency(interesGanado)} COP`);
+      setInteresGenerado(`${formatCurrency(interesGanado)} COP`)
+      let total = parseFloat(capital) + interesGanado
+      setResultado(`${formatCurrency(total)} COP`);
+
+      console.log({
+        interesGenerado,
+        total,
+        resultado
+      })
     }
   };
 
@@ -124,6 +134,7 @@ function App() {
     setPeriodoMeses('')
     setPeriodoDias('')
     setResultado('')
+    setInteresGenerado('')
   }
 
   return (
@@ -131,7 +142,7 @@ function App() {
       <div className=''>
         <h1 className='text-2xl font-bold mb-3 text-secondary-600'>Calculadora de Intereses Compuestos</h1>
         <div className='my-4'>
-          <label className='font-semibold text-1xl text-secondary-600 mb-2' htmlFor="capital">Capital inicial:</label>
+          <label className='font-semibold text-1xl text-secondary-600 mb-3 pb-2' htmlFor="capital">Capital inicial:</label>
           <Input
             variant='flat'
             radius='sm'
@@ -151,7 +162,7 @@ function App() {
           />
         </div>
         <div className='my-4'>
-          <label className='font-semibold text-1xl text-secondary-600 mb-2' htmlFor="interes">Tasa de interés anual (%):</label>
+          <label className='font-semibold text-1xl text-secondary-600 mb-3 pb-2' htmlFor="interes">Tasa de interés anual (%):</label>
           <Input
             radius='sm'
             color='secondary'
@@ -172,7 +183,7 @@ function App() {
           />
         </div>
         <div className='my-4'>
-          <label className='font-semibold text-1xl text-secondary-600 mb-2' htmlFor="periodo">Período:</label>
+          <label className='font-semibold text-1xl text-secondary-600 mb-3 pb-2' htmlFor="periodo">Período:</label>
           <div className="flex items-center gap-3">
             <Input
               radius='sm'
@@ -219,42 +230,63 @@ function App() {
           </Button>
         </div>
 
-        <div className='my-3'>
-          {resultado &&
-            
-            <Card className="mx-auto max-w-xl" decoration="top" decorationColor="purple">
+        <div className='my-8'>
+          <Card className="mx-auto max-w-xl" decoration="top" decorationColor="purple">
             <div className="flex items-center justify-between">
               <h4 className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">El interés ganado será:</h4>
-              <BadgeDelta deltaType="moderateIncrease" isIncreasePositive={true} size="xs" >          +9.3%        </BadgeDelta>
+              <BadgeDelta deltaType={!resultado ? "unchanged" : "increase"} isIncreasePositive={true} size="xs" >            {interesGenerado || `${formatCurrency(0)} COP`}        </BadgeDelta>
             </div>
-            <p className="text-tremor-metric text-tremor-content-strong dark:text-dark-tremor-content-strong font-semibold">{resultado}</p>
-          </Card>}
+            <p className="text-tremor-metric text-tremor-content-strong dark:text-dark-tremor-content-strong font-semibold">{!resultado ? `${formatCurrency(0)} COP` : resultado}</p>
+          </Card>
         </div>
-        <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:6rem_4rem]">
-          <div className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_800px_at_100%_200px,#d5c5ff,transparent)]"></div>
+
+        <div className='mx-auto max-w-xl'>
+          <h2 className='font-bold text-xl mb-3 text-purple-800'>FAQ</h2>
+          <AccordionList>
+            <Accordion>
+              <AccordionHeader className="text-sm font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong  text-left">
+                ¿Cómo se define un año en esta aplicación?
+              </AccordionHeader>
+              <AccordionBody className="leading-6 text-left">
+                Lorem ipsum En esta aplicación, un año siempre tiene 365 días.
+              </AccordionBody>
+            </Accordion>
+            <Accordion>
+              <AccordionHeader className="text-sm font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong  text-left">
+                ¿Cómo se define un mes en esta aplicación?
+              </AccordionHeader>
+              <AccordionBody className="leading-6 text-left">
+                En esta aplicación, un mes siempre tiene 30 días.
+              </AccordionBody>
+            </Accordion>
+            <Accordion>
+              <AccordionHeader className="text-sm font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong  text-left">
+                ¿Cómo se define un día en esta aplicación?
+              </AccordionHeader>
+              <AccordionBody className="leading-6 text-left">
+                En esta aplicación, un día puede ser cualquier cantidad de tiempo que el usuario desee calcular, pero cada día siempre tiene 24 horas.
+              </AccordionBody>
+            </Accordion>
+            <Accordion>
+              <AccordionHeader className="text-sm font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong  text-left">
+                ¿Por qué los meses tienen 30 días?
+              </AccordionHeader>
+              <AccordionBody className="leading-6 text-left">
+                Para simplificar los cálculos, hemos definido que todos los meses tienen 30 días, eliminando la variabilidad de los meses con diferente cantidad de días en el calendario gregoriano.
+              </AccordionBody>
+            </Accordion>
+            <Accordion>
+              <AccordionHeader className="text-sm font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong  text-left">
+                ¿Por qué los años tienen 365 días?
+              </AccordionHeader>
+              <AccordionBody className="leading-6 text-left">
+                Al igual que con los meses, simplificamos los cálculos definiendo que todos los años tienen 365 días, eliminando los años bisiestos.
+              </AccordionBody>
+            </Accordion>
+          </AccordionList>
         </div>
-        <AccordionList>
-          <Accordion>
-            <AccordionHeader className="text-sm font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-              Accordion 1
-            </AccordionHeader>
-            <AccordionBody className="leading-6">        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus        tempor lorem non est congue blandit. Praesent non lorem sodales,        suscipit est sed, hendrerit dolor.
-            </AccordionBody>
-          </Accordion>
-          <Accordion>
-            <AccordionHeader className="text-sm font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-              Accordion 2
-            </AccordionHeader>
-            <AccordionBody className="leading-6">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus        tempor lorem non est congue blandit. Praesent non lorem sodales,        suscipit est sed, hendrerit dolor.      </AccordionBody>    </Accordion>
-          <Accordion>
-            <AccordionHeader className="text-sm font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong">
-              Accordion 3
-            </AccordionHeader>
-            <AccordionBody className="leading-6">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus        tempor lorem non est congue blandit. Praesent non lorem sodales,        suscipit est sed, hendrerit dolor.      </AccordionBody>
-          </Accordion>
-        </AccordionList>
+
+        <Nubank />
       </div>
     </div>
   );
