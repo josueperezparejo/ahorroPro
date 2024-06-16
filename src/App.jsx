@@ -158,7 +158,7 @@ function App() {
                 <span className="text-default-400 text-small">$</span>
               </div>
             }
-            type="tel"
+            type="number"
           />
         </div>
         <div className='my-4'>
@@ -179,7 +179,7 @@ function App() {
                 <span className="text-default-400 text-small">%</span>
               </div>
             }
-            type="tel"
+            type="number"
           />
         </div>
         <div className='my-4'>
@@ -194,7 +194,7 @@ function App() {
               onChange={handleChange(setPeriodoAnios, 0, 100, "El período es demasiado largo, intenta con uno más corto.")}
               onKeyDown={handleKeyDown}
               labelPlacement='outside'
-              type="tel"
+              type="number"
             />
             <Input
               radius='sm'
@@ -205,7 +205,7 @@ function App() {
               onChange={handleChange(setPeriodoMeses, 0, 12, "Intenta agregar más años o días.")}
               onKeyDown={handleKeyDown}
               labelPlacement='outside'
-              type="tel"
+              type="number"
             />
             <Input
               radius='sm'
@@ -216,7 +216,7 @@ function App() {
               onChange={handleChange(setPeriodoDias, 0, 365, "Intenta agregar más años o meses.")}
               onKeyDown={handleKeyDown}
               labelPlacement='outside'
-              type="tel"
+              type="number"
             />
           </div>
         </div>
