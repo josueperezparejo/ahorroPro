@@ -44,70 +44,117 @@ function App() {
   const [resultado, setResultado] = useState('');
   const [interesGenerado, setInteresGenerado] = useState('');
 
-  const calcularInteresCompuesto = (capital, interesAnual, periodoAnios, periodoMeses, periodoDias) => {
-    const capitalNum = parseFloat(cleanCurrencyInput(capital));
-    const interesAnualDecimal = parseFloat(interesAnual) / 100;
-    let periodoAniosNum = parseInt(periodoAnios);
-    let periodoMesesNum = parseInt(periodoMeses);
-    let periodoDiasNum = parseInt(periodoDias);
+    // const calcularInteresCompuesto = (capital, interesAnual, periodoAnios, periodoMeses, periodoDias) => {
+    //   const capitalNum = parseFloat(cleanCurrencyInput(capital));
+    //   const interesAnualDecimal = parseFloat(interesAnual) / 100;
+    //   let periodoAniosNum = parseInt(periodoAnios);
+    //   let periodoMesesNum = parseInt(periodoMeses);
+    //   let periodoDiasNum = parseInt(periodoDias);
 
-    if (isNaN(capitalNum) || isNaN(interesAnualDecimal)) {
-      Swal.fire({
-        position: "center",
-        icon: "warning",
-        title: "Por favor, ingresa valores válidos.",
-        showConfirmButton: false,
-        timer: 1500
-      });
-      return null;
-    }
+    //   if (isNaN(capitalNum) || isNaN(interesAnualDecimal)) {
+    //     Swal.fire({
+    //       position: "center",
+    //       icon: "warning",
+    //       title: "Por favor, ingresa valores válidos.",
+    //       showConfirmButton: false,
+    //       timer: 1500
+    //     });
+    //     return null;
+    //   }
 
-    // Verificar si al menos una de las variables tiene un valor mayor que cero
-    const hasValue = (!isNaN(periodoAniosNum) && periodoAniosNum > 0) ||
-      (!isNaN(periodoMesesNum) && periodoMesesNum > 0) ||
-      (!isNaN(periodoDiasNum) && periodoDiasNum > 0);
+    //   // Verificar si al menos una de las variables tiene un valor mayor que cero
+    //   const hasValue = (!isNaN(periodoAniosNum) && periodoAniosNum > 0) ||
+    //     (!isNaN(periodoMesesNum) && periodoMesesNum > 0) ||
+    //     (!isNaN(periodoDiasNum) && periodoDiasNum > 0);
 
-    if (hasValue) {
-      // Asignar cero a las variables NaN
-      if (isNaN(periodoAniosNum)) {
-        periodoAniosNum = 0;
+    //   if (hasValue) {
+    //     // Asignar cero a las variables NaN
+    //     if (isNaN(periodoAniosNum)) {
+    //       periodoAniosNum = 0;
+    //     }
+    //     if (isNaN(periodoMesesNum)) {
+    //       periodoMesesNum = 0;
+    //     }
+    //     if (isNaN(periodoDiasNum)) {
+    //       periodoDiasNum = 0;
+    //     }
+    //   } else {
+    //     Swal.fire({
+    //       position: "center",
+    //       icon: "warning",
+    //       title: "Agrega un período valido.",
+    //       showConfirmButton: false,
+    //       timer: 1500
+    //     });
+    //     return null;
+    //   }
+
+    //   // Convertir los períodos a años para facilitar el cálculo
+    //   const totalPeriodoAnios = periodoAniosNum + periodoMesesNum / 12 + periodoDiasNum / 365;
+
+    //   // Calcular el monto final después del período
+    //   const montoFinal = capitalNum * Math.pow(1 + interesAnualDecimal, totalPeriodoAnios);
+
+    //   // Calcular el interés ganado
+    //   const interesGanado = montoFinal - capitalNum;
+
+    //   return interesGanado; // Devolver el interés ganado sin redondear a dos decimales aquí
+    // };  
+
+    const calcularInteresCompuesto = (capital, interesAnual, periodoAnios, periodoMeses, periodoDias) => {
+      const capitalNum = parseFloat(cleanCurrencyInput(capital));
+      const interesAnualDecimal = parseFloat(interesAnual) / 100;
+    
+      let periodoAniosNum = parseInt(periodoAnios);
+      let periodoMesesNum = parseInt(periodoMeses);
+      let periodoDiasNum = parseInt(periodoDias);
+    
+      if (isNaN(capitalNum) || isNaN(interesAnualDecimal)) {
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: "Por favor, ingresa valores válidos.",
+          showConfirmButton: false,
+          timer: 1500
+        });
+        return null;
       }
-      if (isNaN(periodoMesesNum)) {
-        periodoMesesNum = 0;
+    
+      // Convertir los períodos a días para facilitar el cálculo
+      let totalDias = 0;
+    
+      // Convertir años a días
+      if (!isNaN(periodoAniosNum)) {
+        totalDias += periodoAniosNum * 365;
       }
-      if (isNaN(periodoDiasNum)) {
-        periodoDiasNum = 0;
+    
+      // Convertir meses a días (considerando 30 días por mes)
+      if (!isNaN(periodoMesesNum)) {
+        totalDias += periodoMesesNum * 30;
       }
-    } else {
-      Swal.fire({
-        position: "center",
-        icon: "warning",
-        title: "Agrega un período valido.",
-        showConfirmButton: false,
-        timer: 1500
-      });
-      return null;
-    }
-
-    // Convertir los períodos a años para facilitar el cálculo
-    const totalPeriodoAnios = periodoAniosNum + periodoMesesNum / 12 + periodoDiasNum / 365;
-
-    // Calcular el monto final después del período
-    const montoFinal = capitalNum * Math.pow(1 + interesAnualDecimal, totalPeriodoAnios);
-
-    // Calcular el interés ganado
-    const interesGanado = montoFinal - capitalNum;
-
-    return interesGanado; // Devolver el interés ganado sin redondear a dos decimales aquí
-  };
-
+    
+      // Sumar días adicionales si se especificaron
+      if (!isNaN(periodoDiasNum)) {
+        totalDias += periodoDiasNum;
+      }
+    
+      // Calcular el monto final después del período
+      const montoFinal = capitalNum * Math.pow(1 + interesAnualDecimal, totalDias / 365);
+    
+      // Calcular el interés ganado
+      const interesGanado = montoFinal - capitalNum;
+    
+      return interesGanado; // Devolver el interés ganado sin redondear a dos decimales aquí
+    };
+    
+  
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(amount);
   }
 
   const handleChange = (setter) => (e) => {
     const value = e.target.value;
-    if (isValidNumber(value)) {
+    if (isValidNumber(value) && value >= 0 ) {
       setter(value);
     }
   };
@@ -248,7 +295,7 @@ function App() {
                 ¿Cómo se define un año en esta aplicación?
               </AccordionHeader>
               <AccordionBody className="leading-6 text-left">
-                Lorem ipsum En esta aplicación, un año siempre tiene 365 días.
+                En esta aplicación, un año siempre tiene 365 días.
               </AccordionBody>
             </Accordion>
             <Accordion>
