@@ -158,7 +158,7 @@ function App() {
                 <span className="text-default-400 text-small">$</span>
               </div>
             }
-            type="text"
+            type="phone"
           />
         </div>
         <div className='my-4'>
@@ -179,7 +179,7 @@ function App() {
                 <span className="text-default-400 text-small">%</span>
               </div>
             }
-            type="text"
+            type="phone"
           />
         </div>
         <div className='my-4'>
