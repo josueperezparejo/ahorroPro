@@ -169,7 +169,7 @@ function App() {
             label="Ingresa la tasa de interés anual"
             placeholder="0.00"
             value={interes}
-            onChange={handleChange(setInteres, 0, 100)}
+            onChange={handleChange(setInteres, 0, 100, "interés anual no valido")}
             onKeyDown={handleKeyDown}
             step="0.01"
             labelPlacement='outside'
