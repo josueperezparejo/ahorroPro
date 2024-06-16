@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Input, Link } from '@nextui-org/react';
+import { Button, Input } from '@nextui-org/react';
 import Swal from 'sweetalert2';
-import './App.css';
 import { Accordion, AccordionBody, AccordionHeader, AccordionList, BadgeDelta, Card, Divider } from '@tremor/react';
 import { Nubank } from './components';
+import "./App.css"
 
 const isValidNumber = (value) => {
   // Permitir solo números y un punto decimal
@@ -44,120 +44,79 @@ function App() {
   const [resultado, setResultado] = useState('');
   const [interesGenerado, setInteresGenerado] = useState('');
 
-    // const calcularInteresCompuesto = (capital, interesAnual, periodoAnios, periodoMeses, periodoDias) => {
-    //   const capitalNum = parseFloat(cleanCurrencyInput(capital));
-    //   const interesAnualDecimal = parseFloat(interesAnual) / 100;
-    //   let periodoAniosNum = parseInt(periodoAnios);
-    //   let periodoMesesNum = parseInt(periodoMeses);
-    //   let periodoDiasNum = parseInt(periodoDias);
+  const calcularInteresCompuesto = (capital, interesAnual, periodoAnios, periodoMeses, periodoDias) => {
+    const capitalNum = parseFloat(cleanCurrencyInput(capital));
+    const interesAnualDecimal = parseFloat(interesAnual) / 100;
 
-    //   if (isNaN(capitalNum) || isNaN(interesAnualDecimal)) {
-    //     Swal.fire({
-    //       position: "center",
-    //       icon: "warning",
-    //       title: "Por favor, ingresa valores válidos.",
-    //       showConfirmButton: false,
-    //       timer: 1500
-    //     });
-    //     return null;
-    //   }
+    let periodoAniosNum = parseInt(periodoAnios);
+    let periodoMesesNum = parseInt(periodoMeses);
+    let periodoDiasNum = parseInt(periodoDias);
 
-    //   // Verificar si al menos una de las variables tiene un valor mayor que cero
-    //   const hasValue = (!isNaN(periodoAniosNum) && periodoAniosNum > 0) ||
-    //     (!isNaN(periodoMesesNum) && periodoMesesNum > 0) ||
-    //     (!isNaN(periodoDiasNum) && periodoDiasNum > 0);
+    if (isNaN(capitalNum) || isNaN(interesAnualDecimal)) {
+      Swal.fire({
+        position: "center",
+        icon: "warning",
+        title: "Por favor, llena los campos.",
+        showConfirmButton: false,
+        timer: 1500
+      });
+      return null;
+    }
 
-    //   if (hasValue) {
-    //     // Asignar cero a las variables NaN
-    //     if (isNaN(periodoAniosNum)) {
-    //       periodoAniosNum = 0;
-    //     }
-    //     if (isNaN(periodoMesesNum)) {
-    //       periodoMesesNum = 0;
-    //     }
-    //     if (isNaN(periodoDiasNum)) {
-    //       periodoDiasNum = 0;
-    //     }
-    //   } else {
-    //     Swal.fire({
-    //       position: "center",
-    //       icon: "warning",
-    //       title: "Agrega un período valido.",
-    //       showConfirmButton: false,
-    //       timer: 1500
-    //     });
-    //     return null;
-    //   }
+    // Convertir los períodos a días para facilitar el cálculo
+    let totalDias = 0;
 
-    //   // Convertir los períodos a años para facilitar el cálculo
-    //   const totalPeriodoAnios = periodoAniosNum + periodoMesesNum / 12 + periodoDiasNum / 365;
+    // Convertir años a días
+    if (!isNaN(periodoAniosNum)) {
+      totalDias += periodoAniosNum * 365;
+    }
 
-    //   // Calcular el monto final después del período
-    //   const montoFinal = capitalNum * Math.pow(1 + interesAnualDecimal, totalPeriodoAnios);
+    // Convertir meses a días (considerando 30 días por mes)
+    if (!isNaN(periodoMesesNum)) {
+      totalDias += periodoMesesNum * 30;
+    }
 
-    //   // Calcular el interés ganado
-    //   const interesGanado = montoFinal - capitalNum;
+    // Sumar días adicionales si se especificaron
+    if (!isNaN(periodoDiasNum)) {
+      totalDias += periodoDiasNum;
+    }
 
-    //   return interesGanado; // Devolver el interés ganado sin redondear a dos decimales aquí
-    // };  
+    // Calcular el monto final después del período
+    const montoFinal = capitalNum * Math.pow(1 + interesAnualDecimal, totalDias / 365);
 
-    const calcularInteresCompuesto = (capital, interesAnual, periodoAnios, periodoMeses, periodoDias) => {
-      const capitalNum = parseFloat(cleanCurrencyInput(capital));
-      const interesAnualDecimal = parseFloat(interesAnual) / 100;
-    
-      let periodoAniosNum = parseInt(periodoAnios);
-      let periodoMesesNum = parseInt(periodoMeses);
-      let periodoDiasNum = parseInt(periodoDias);
-    
-      if (isNaN(capitalNum) || isNaN(interesAnualDecimal)) {
-        Swal.fire({
-          position: "center",
-          icon: "warning",
-          title: "Por favor, ingresa valores válidos.",
-          showConfirmButton: false,
-          timer: 1500
-        });
-        return null;
-      }
-    
-      // Convertir los períodos a días para facilitar el cálculo
-      let totalDias = 0;
-    
-      // Convertir años a días
-      if (!isNaN(periodoAniosNum)) {
-        totalDias += periodoAniosNum * 365;
-      }
-    
-      // Convertir meses a días (considerando 30 días por mes)
-      if (!isNaN(periodoMesesNum)) {
-        totalDias += periodoMesesNum * 30;
-      }
-    
-      // Sumar días adicionales si se especificaron
-      if (!isNaN(periodoDiasNum)) {
-        totalDias += periodoDiasNum;
-      }
-    
-      // Calcular el monto final después del período
-      const montoFinal = capitalNum * Math.pow(1 + interesAnualDecimal, totalDias / 365);
-    
-      // Calcular el interés ganado
-      const interesGanado = montoFinal - capitalNum;
-    
-      return interesGanado; // Devolver el interés ganado sin redondear a dos decimales aquí
-    };
-    
-  
+    // Calcular el interés ganado
+    const interesGanado = montoFinal - capitalNum;
+
+    return interesGanado; // Devolver el interés ganado sin redondear a dos decimales aquí
+  };
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(amount);
   }
 
-  const handleChange = (setter) => (e) => {
+  const handleChange = (setter, minValue, maxValue, errorMessage) => (e) => {
     const value = e.target.value;
-    if (isValidNumber(value) && value >= 0 ) {
-      setter(value);
+
+    // Verificar si el valor es un número válido
+    if (isValidNumber(value) && value >= 0) {
+      // Verificar el rango solo si se han proporcionado minValue y maxValue
+      if ((minValue !== undefined && value < minValue) || (maxValue !== undefined && value > maxValue)) {
+        // Mostrar mensaje de advertencia si está fuera del rango
+        Swal.fire({
+          position: "center",
+          icon: "warning",
+          title: `${errorMessage}`,
+          showConfirmButton: false,
+          timer: 1500
+        });
+      } else {
+        setter(value);
+      }
     }
   };
+
+
+
 
   const handleClickCalcular = () => {
     const interesGanado = calcularInteresCompuesto(capital, interes, periodoAnios, periodoMeses, periodoDias);
@@ -165,12 +124,6 @@ function App() {
       setInteresGenerado(`${formatCurrency(interesGanado)} COP`)
       let total = parseFloat(capital) + interesGanado
       setResultado(`${formatCurrency(total)} COP`);
-
-      console.log({
-        interesGenerado,
-        total,
-        resultado
-      })
     }
   };
 
@@ -216,7 +169,7 @@ function App() {
             label="Ingresa la tasa de interés anual"
             placeholder="0.00"
             value={interes}
-            onChange={handleChange(setInteres)}
+            onChange={handleChange(setInteres, 0, 100)}
             onKeyDown={handleKeyDown}
             step="0.01"
             labelPlacement='outside'
@@ -238,7 +191,7 @@ function App() {
               label="Años"
               placeholder="0"
               value={periodoAnios}
-              onChange={handleChange(setPeriodoAnios)}
+              onChange={handleChange(setPeriodoAnios, 0, 100, "El período es demasiado largo, intenta con uno más corto.")}
               onKeyDown={handleKeyDown}
               labelPlacement='outside'
               type="number"
@@ -249,7 +202,7 @@ function App() {
               label="Meses"
               placeholder="0"
               value={periodoMeses}
-              onChange={handleChange(setPeriodoMeses)}
+              onChange={handleChange(setPeriodoMeses, 0, 12, "Intenta agregar más años o días.")}
               onKeyDown={handleKeyDown}
               labelPlacement='outside'
               type="number"
@@ -260,7 +213,7 @@ function App() {
               label="Días"
               placeholder="0"
               value={periodoDias}
-              onChange={handleChange(setPeriodoDias)}
+              onChange={handleChange(setPeriodoDias, 0, 365, "Intenta agregar más años o meses.")}
               onKeyDown={handleKeyDown}
               labelPlacement='outside'
               type="number"
